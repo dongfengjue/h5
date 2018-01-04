@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <style>
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+ <!-- {{getOilCard()}} -->
+<div v-for="item in oilCard"> 
+
+<div v-if="item.isDefault == 1" @click="dialogFormVisible = true" > 加油卡号 ： {{item.cardNo}}</div>
+
+</div>
+<!-- <div @click="dialogTableVisible = true">使用现金券:{{checkedTicketModel.faceValue}}</div> -->
+<div>折扣：{{this.discount = getParam("discount")}}</div>
+<div>数量：{{this.count = getParam("count")}}</div>
+<div>单价：{{this.unitPrice = getParam("unitPrice")}}</div>
+<div>实付金额：{{this.amount = getParam("amount")}}</div>
+   
+
+   <el-button type="primary" @click = "submitOrder()" round>立即购买</el-button>
+
+
+
+
+
+<el-dialog title="现金券" :visible.sync="dialogTableVisible">
+  <el-table :data="gridData">
+    <el-table-column property="id" label="id" width="150"></el-table-column>
+    <el-table-column property="faceValue" label="面值" width="200"></el-table-column>
+
+    <el-table-column label="操作">
+      <template slot-scope="scope">
+        <el-button
+          size="mini"
+          @click="checkedTicket(scope.row)">选择</el-button>
+      </template>
+    </el-table-column>
+
+  </el-table>
+</el-dialog>
+
+<el-dialog title="增加加油卡" :visible.sync="dialogFormVisible">
+  <el-form :model="form">
+    <el-form-item label="加油卡号" :label-width="formLabelWidth">
+      <el-input v-model="form.cardNo" auto-complete="off"></el-input>
+    </el-form-item>
+    
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addOilCard(form.cardNo)">增加</el-button>
+  </div>
+</el-dialog>
+
+
+
+  </div>
+</body>
+  <!-- 先引入 Vue -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+  <script>
+
+ 
+const baseUrl = "http://localhost:8080/graphql";
+
+
+// New VueJS instance
+const app = new Vue({
+  // CSS selector of the root DOM element
+  el: '#app',
+  data: {
+        oilCard: [],
+        rechargeCardValue:{},
+        checkedValue:{},
+        checkedDiscount:{},
+        dialogFormVisible: false,
+        dialogTableVisible:false,
+        form: {
+          cardNo:''
+        },
+        formLabelWidth: '120px',
+        gridData:[],
+        checkedTicketModel:"",
+        amount:0
+
+  },
+
+  methods: {
+      // 事件响应方法的逻辑代码
+      toProductList: function (e) {
+        
+        window.location.href="./productList.html"; 
+        
+      },getParam: function (name) {
+        
+         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+         var r = window.location.search.substr(1).match(reg);
+         if(r!=null)return  unescape(r[2]); return null;
+
+      },getTickets:function(){
+
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "query {ticketListByLoginUser {id, faceValue }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    beforeSend: function(request) {
+                        request.setRequestHeader("c2bSession", document.cookie.replace("c2bToken=",""));
+                    },
+                    success : function(res) {
+                          self.gridData = res.data.ticketListByLoginUser;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      },submitOrder:function(){
+
+                var defaultOilCardNo = "";
+                for(var i=0;i<this.oilCard.length;i++){
+                  if(this.oilCard[i].isDefault == "1"){
+                    this.defaultOilCardNo = this.oilCard[i].cardNo;
+                  }
+
+                }
+
+                self = this;
+
+// Long oilCardNo, Double unitPrice,Integer count,Double discount , Double amount
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "mutation {rechargeOilCard(cardNo:'+self.defaultOilCardNo+', unitPrice:'+self.unitPrice+', count:'+self.count+', discount:'+self.discount+', amount:'+self.amount+') {id}}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    beforeSend: function(request) {
+                        request.setRequestHeader("c2bSession", document.cookie.replace("c2bToken=",""));
+                    },
+                    success : function(res) {
+                          var order = res.data.rechargeOilCard;
+                          window.location.href=encodeURI(encodeURI("./pay.html?orderId="+order.id+"&amount="+self.amount+"&productType=加油卡充值")); 
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+      },getOilCard:function(){
+
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "query {rechargeOilCardByLoginUser {id, cardNo , isDefault }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    beforeSend: function(request) {
+                        request.setRequestHeader("c2bSession", document.cookie.replace("c2bToken=",""));
+                    },
+                    success : function(res) {
+                          self.oilCard = res.data.rechargeOilCardByLoginUser;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      },checkedTicket:function(ticket){
+
+        this.checkedTicketModel = ticket;
+        this.dialogTableVisible = false;
+
+      }
+      ,addOilCard:function(cardNo){
+
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "mutation {addOilCard(cardNo:'+cardNo+'){id, cardNo , isDefault }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    success : function(res) {
+                          // self.oilCard = res.data.addOilCard;
+                          self.dialogFormVisible = false;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      },changeTip:function(discount){
+          this.checkedDiscount = discount;
+
+
+      },getDate:function(n){
+        var date = new Date()
+        date.setMonth(date.getMonth()+n);
+
+        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+      }
+
+        
+  }
+
+})
+
+app.getOilCard();
+app.getTickets()
+// app.getParam("amount");  
+  </script>
+</html>

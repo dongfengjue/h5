@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <style>
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+
+    <div >{{index.litreProductName}}</div>
+    <el-row :gutter="20" v-for="item in index.litreProduct">
+
+      <el-col :span="6">
+        <div class="grid-content bg-purple" @click = "toProductDetail" >{{item.name}}--{{item.fixedProfit}}--{{item.oilProfit}}--{{item.timeLimit}}--{{item.desc}}</div>
+      </el-col>
+     
+    </el-row>
+
+
+    <div >{{index.moneyProductName}}</div>
+    <el-row :gutter="20" v-for="item in index.moneyProduct">
+
+      <el-col :span="6">
+        <div class="grid-content bg-purple" @click = "toProductDetail">{{item.name}}--{{item.discount}}--{{item.moneyLimit}}--{{item.timeLimit}}--{{item.desc}}</div>
+      </el-col>
+     
+    </el-row>
+   
+  </div>
+</body>
+  <!-- 先引入 Vue -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: function() {
+        return {
+              "index": {
+                  "litreProductName": "定升储油",
+                  "litreProduct": [
+                      {
+                          "name": "月月升",
+                          "fixedProfit": "4.5 - 7.0%",
+                          "oilProfit": "20.0%",
+                          "timeLimit": "3月",
+                          "desc": "储油期限内限定固定"
+                      },
+                      {
+                          "name": "储油涨",
+                          "fixedProfit": "2.0%",
+                          "oilProfit": "100.0%",
+                          "timeLimit": "3月",
+                          "desc": "固定年化2%，还有"
+                      },
+                      {
+                          "name": "大众储油卡",
+                          "fixedProfit": "4.5%",
+                          "oilProfit": "20.0%",
+                          "timeLimit": "3月",
+                          "desc": "最高保底年收益"
+                      }
+                  ],
+                  "moneyProductName": "定额加油",
+                  "moneyProduct": [
+                      {
+                          "name": "全国加油卡",
+                          "discount": "9.85折",
+                          "moneyLimit": "35.0%",
+                          "timeLimit": "3月",
+                          "desc": "最低9.25折优惠"
+                      }
+                  ]
+              }
+          }
+      },
+      methods: {
+	    // 事件响应方法的逻辑代码
+	    toProductList: function (e) {
+	    	
+	      window.location.href="./productList.html"; 
+	      
+	    },toProductDetail: function (e) {
+        
+        window.location.href="./productDetail.html"; 
+        
+      }
+	  }
+
+    })
+  </script>
+</html>

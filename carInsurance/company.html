@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<style>
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+</style>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+  <div id="app">
+    <div >
+                    
+                   
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple-dark">车辆信息</div></el-col>
+        </el-row>
+
+  	  	<el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">投保城市</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.insuranceCityNo" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">车牌号码</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.licensePlateNo" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">车牌底部颜色</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="input" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row> -->
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">车主姓名</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.ownerName" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+    </div>
+
+    <div >
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple-dark">行驶证信息</div></el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">品牌型号</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.carModel" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">车型识别代码</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.vin" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">配置型号</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.carModel" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row> -->
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">发动机号</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.engineNo" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">注册日期</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.registerDate" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <!-- <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">发证日期</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.issuingDate" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row> -->
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">车主姓名</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.ownerName" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">身份证</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.ownerId" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">手机号码</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.ownerPhone" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+                    
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">交强险生效时间</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.compulsoryEffectDate" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple">商业险生效时间</div></el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.commercialEffectDate" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+        </el-row>
+        
+
+    </div>
+
+    <div >
+      <el-row>
+          <el-col :span="12"><div class="grid-content bg-purple-dark">被保人收件人信息</div></el-col>
+        </el-row>
+      <el-row>
+        <el-col :span="12"><div class="grid-content bg-purple">被保人</div></el-col>
+        <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.insuredName" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12"><div class="grid-content bg-purple">手机号码</div></el-col>
+        <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.insuredPhone" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12"><div class="grid-content bg-purple">身份证号</div></el-col>
+        <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.insuredId" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+      </el-row>
+
+
+      <el-row>
+        <el-col :span="12"><div class="grid-content bg-purple">邮箱地址</div></el-col>
+        <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.email" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12"><div class="grid-content bg-purple">收件地址</div></el-col>
+        <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="moreAddress" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12"><div class="grid-content bg-purple">详细地址</div></el-col>
+        <el-col :span="12">
+            <div class="grid-content bg-purple-light">
+              <el-input v-model="order.address" placeholder="请输入内容"></el-input>
+            </div>
+          </el-col>
+      </el-row>
+    </div>
+<!--         方案选择    -->
+    <div >
+      <el-row>
+        <el-col :span="6"><div class="grid-content bg-purple">交强险+车船税</div></el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">
+            <el-checkbox v-model="order.setIsInsureCompelInsurance"></el-checkbox>
+          </div>
+        </el-col>
+      </el-row>
+
+      <el-row>
+            <el-col :span="6"><div class="grid-content bg-purple">商业险</div></el-col>
+      </el-row>
+
+      <div v-for="coverage in order.coverageList" >       
+
+        <el-row>
+            <div v-show="false">{{coverage.coverageCode}}</div>
+            <el-col :span="6"><div class="grid-content bg-purple"  >{{coverage.coverageName}}</div></el-col>
+            
+            <el-col :span="6">
+              <div class="grid-content bg-purple">
+                <el-checkbox v-model="coverage.isNonDeductible" >不计免赔</el-checkbox>
+              </div>
+            </el-col>
+            
+            <el-col :span="6">
+              <div class="grid-content bg-purple">
+                <div v-if="coverage.glassType == 'B' || coverage.glassType == 'A' ">
+                    <template>
+                      <el-select v-model="coverage.glassType" placeholder="请选择">
+                        <el-option
+                          v-for="item in options"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </template>
+
+                </div>
+
+                <div v-else>
+                  <el-input v-model="coverage.sumInsured" placeholder="请输入内容"></el-input>
+                </div>
+
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="grid-content bg-purple-light">
+                <el-checkbox v-model="coverage.isEffect"></el-checkbox>
+              </div>
+            </el-col>
+        </el-row>
+
+      </div>
+       
+  </div>
+<el-button type="danger" @click = "submitOrder" >下一步</el-button>
+ 
+ <div>
+      <article v-for="post of posts">
+        <div class="title">{{ post.title }}</div>
+        <div class="author">By {{ post.author.name }}</div>
+      </article>
+    </div>
+
+
+ </div> 
+</body>
+  <!-- 先引入 Vue -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <!-- Include the library in the page -->
+  <script src="https://unpkg.com/apollo-client-browser@0.0.5"></script>
+  <script src="https://unpkg.com/vue-apollo@2.1.0-beta.18"></script>
+  <script>
+
+  Vue.use(VueApollo)
+
+
+  const apolloProvider = new VueApollo.ApolloProvider({
+        defaultClient: new Apollo.lib.ApolloClient({
+        networkInterface: Apollo.lib.createNetworkInterface({
+          uri: 'https://nnnwvmq07.lp.gql.zone/graphql',
+          transportBatching: true,
+        }),
+        connectToDevTools: true,
+      }),
+  })
+
+
+    new Vue({
+      el: '#app',
+      data: function() {
+        return { 
+          moreInfo:"",
+          moreAddress:"",
+
+                options: [{
+                  value: 'A',
+                  label: '进口'
+                }, {
+                  value: 'B',
+                  label: '国产'
+                }],
+
+                order:{// 车牌号码
+
+                    licensePlateNo:"粤BE2040",
+                    carModel:"CAF7201B4",
+                    insuranceCityNo:"440100",
+                    vin:"LFMAPE2CXB0945236",
+                    engineNo:"E9326514",
+                    registerDate:"2013-07-25",
+                    // issuingDate:"20130421",
+                    ownerName:"张田农",
+                    ownerId:"150522199304011411",
+                    ownerPhone:"13688883333",
+                    compulsoryEffectDate:"2017-11-30",
+                    commercialEffectDate:"2017-11-30",
+                    insuredId:"150522199304011411",
+                    insuredName:"张田农",
+                    insuredPhone:"13688883333",
+                    provinceCode:"440000",
+                    cityCode:"440100",
+                    districtCode:"440103",
+                    email:"1009529808@qq.com",
+                    address:"民治大道18号",
+                    vendorType:"4",
+                    serialNum:"",
+                    setIsInsureCompelInsurance:"1",
+                    coverageList:[
+                        
+                          {
+            "sumInsured": "105000",
+            "coverageName": "机动车损失保险",
+            "coverageCode": "911",
+            "isNonDeductible":true,
+            "isEffect":true
+        },
+        {
+            "sumInsured": "200000",
+            "coverageName": "机动车第三者责任保险",
+            "coverageCode": "912",
+            "isNonDeductible":true,
+            "isEffect":true
+        },
+        {
+            "sumInsured": "105000",
+            "coverageName": "全车盗抢险",
+            "coverageCode": "915",
+            "isNonDeductible":true,
+            "isEffect":true
+        },
+        {
+            "sumInsured": "100000",
+            "coverageName": "机动车车上人员责任保险（司机）",
+            "coverageCode": "913",
+            "isNonDeductible":true,
+            "isEffect":true
+        },
+        {
+            "sumInsured": "150000",
+            "coverageName": "机动车车上人员责任保险（乘客）",
+            "coverageCode": "914",
+            "isNonDeductible":true,
+            "isEffect":true
+        },
+        {
+            "glassType": "B",
+            "coverageName": "玻璃单独破碎险",
+            "coverageCode": "91A",
+            "isEffect":true
+        },
+        {
+            "sumInsured": "105000",
+            "coverageName": "自燃损失险",
+            "coverageCode": "91B",
+            "isNonDeductible":true,
+            "isEffect":true
+        },
+        {
+            "coverageName": "发动机涉水损失险",
+            "coverageCode": "91E",
+            "isNonDeductible":true,
+            "isEffect":true
+        },
+        {
+            "sumInsured": "1510000",
+            "coverageName": "机动车损失保险无法找到第三方特约险",
+            "coverageCode": "91F",
+            "isEffect":true
+        },
+        {
+            "coverageName": "指定修理厂险",
+            "coverageCode": "91D",
+            "isEffect":true
+        }
+
+                          
+                          ]
+                  }
+              }
+      },
+    
+           // Apollo GraphQL
+      apolloProvider,
+      apollo: {
+        posts: Apollo.gql`
+                {
+                  posts {
+                    id
+                    title
+                    author {
+                      id
+                      name
+                    }
+                  }
+                }
+                `,
+      },
+
+      methods: {
+	    // 事件响应方法的逻辑代码
+	    toCompany: function (e) {
+	    	
+	      this.$router.push({path: '/company.html'});
+	    },
+      submitOrder:function () {
+
+
+          $.ajax({
+                    type : "POST",
+                    url : "/branch_v3.0/index.php/b2cphone/carInsurance/submitOrder",
+                    data :{orderStr:JSON.stringify(this.order)},
+                    dataType: "JSON",
+                    success : function(data) {
+                         alert(data.info);
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+        }
+	  }
+
+    })
+  </script>
+</html>

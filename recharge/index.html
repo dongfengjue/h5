@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <style>
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+ 
+<div v-if=" checkedValue.value && checkedValue.unit && checkedDiscount.discount && checkedDiscount.count" > {{checkedValue.value}}{{checkedValue.unit}} --- {{checkedDiscount.discount}}折{{checkedDiscount.count}}个月 </div>
+<div>每月充值金额</div>
+
+    <div style="margin: 20px 0" v-for="item in rechargeCard.rechargeCardValues" >
+      <el-button plain @click = "checkValue(item)" >{{item.value}}{{item.unit}}</el-button>
+    </div>
+
+<div>选择充值套餐</div>
+    <div style="margin: 20px 0" v-for="item in rechargeCardValue.rechargeDiscounts" >
+      <el-button type="primary" plain @click = "changeTip(item)" >
+       <div v-if="item.discount == 10 ">
+        无折扣  
+       </div>
+       <div v-else>
+           {{item.discount}}折
+       </div>
+
+       <div v-if="item.count == 1 ">
+            即充即用  
+       </div>
+       <div v-else>
+           充值{{item.count}}个月
+       </div>
+
+       
+       </el-button>
+    </div>
+
+<div>充值{{checkedDiscount.count}}个月,每月自动到账，当天到账第一笔 原价{{checkedValue.value * checkedDiscount.count }}元 折扣价{{checkedValue.value * checkedDiscount.count * checkedDiscount.discount*0.1}}元 共省{{checkedValue.value * checkedDiscount.count * (1 - checkedDiscount.discount*0.1)}}元</div>
+
+<div>充值明细</div>
+<div>{{checkedValue.value }}元/每月*{{checkedDiscount.count}}个月={{checkedValue.value * checkedDiscount.count}}元</div>
+
+<div v-for="n in checkedDiscount.count"> 
+{{checkedValue.value}}{{checkedValue.unit}}({{n}}/{{checkedDiscount.count}}) ------
+<span v-if="n == 1">
+预计10分钟内
+</span>
+<span v-else>
+{{getDate(n - 1)}}
+</span>
+
+</div>
+
+<div>首月{{checkedValue.value }}元，在购买后10分钟内到账</div>
+   
+
+   <el-button type="primary" round @click="toBuy">下一步</el-button>
+
+  </div>
+</body>
+  <!-- 先引入 Vue -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+  <script src="https://unpkg.com/apollo-client-browser@0.0.5"></script>
+  <script src="https://unpkg.com/vue-apollo@2.1.0-beta.18"></script>
+
+  <script>
+
+  console.clear()
+
+Vue.use(VueApollo)
+
+const apolloClient = new Apollo.lib.ApolloClient({
+  networkInterface: Apollo.lib.createNetworkInterface({
+    uri: 'http://localhost:8080/graphql',
+    transportBatching: true,
+  }),
+  connectToDevTools: true,
+})
+
+const apolloProvider = new VueApollo.ApolloProvider({
+  defaultClient: apolloClient,
+})
+
+const rechargeCardQuery = Apollo.gql`
+{
+  rechargeCard (id:1){
+    id
+    name
+    rechargeCardValues{
+      id
+      value
+      unit
+     
+    }
+  }
+}
+`
+const baseUrl = "http://localhost:8080/graphql";
+
+
+// New VueJS instance
+const app = new Vue({
+  // CSS selector of the root DOM element
+  el: '#app',
+  data: {
+        rechargeCard: {},
+        rechargeCardValue:{},
+        checkedValue:{},
+        checkedDiscount:{}
+
+  },
+  // Apollo GraphQL
+  apolloProvider,
+  apollo: {
+    // rechargeCard: POSTS_QUERY,
+    rechargeCard: rechargeCardQuery,
+  },
+
+  methods: {
+      // 事件响应方法的逻辑代码
+       toBuy: function (e) {
+        
+        var amount = this.checkedValue.value * this.checkedDiscount.count * this.checkedDiscount.discount*0.1 ;
+        window.location.href="./buy.html?amount="+amount+"&unitPrice="+this.checkedValue.value+"&count="+this.checkedDiscount.count+"&discount="+this.checkedDiscount.discount; 
+        
+      },checkValue:function(faceValue){
+
+        this.checkedValue = faceValue;
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "query {rechargeCardValue(id: '+ faceValue.id+') {id, value , unit,rechargeDiscounts{ id ,discount,count} }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    success : function(res) {
+                          self.rechargeCardValue = res.data.rechargeCardValue;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      },changeTip:function(discount){
+          this.checkedDiscount = discount;
+
+
+      },getDate:function(n){
+        var date = new Date()
+        date.setMonth(date.getMonth()+n);
+
+        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+      }
+
+        
+  }
+
+})
+
+    console.log(app)
+   
+  </script>
+</html>

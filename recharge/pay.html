@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <style>
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+ <!-- {{getOilCard()}} -->
+
+ <div >订单号：{{this.orderId = getParam("orderId")}}</div>
+ <div >订单商品：{{decodeURI(getParam("productType"))}}</div>
+ <div >实付金额：{{this.amount = getParam("amount")}}</div>
+
+   <el-button type="primary" @click = "payOrder()" round>支付</el-button>
+
+
+  </div>
+</body>
+  <!-- 先引入 Vue -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+  <script>
+
+ 
+const baseUrl = "http://localhost:8080/graphql";
+
+
+// New VueJS instance
+const app = new Vue({
+  // CSS selector of the root DOM element
+  el: '#app',
+  data: {
+        orderId:0,
+        amount:0
+
+  },
+
+  methods: {
+      // 事件响应方法的逻辑代码
+      toProductList: function (e) {
+        
+        window.location.href="./productList.html"; 
+        
+      },getParam: function (name) {
+        
+         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+         var r = window.location.search.substr(1).match(reg);
+         if(r!=null)return  this.amount = unescape(r[2]); return null;
+
+      },getTickets:function(){
+
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "query {ticketListByLoginUser {id, faceValue }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    success : function(res) {
+                          self.gridData = res.data.ticketListByLoginUser;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      },payOrder:function(){
+                self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "mutation {rechargeOilCardPay(amount:'+self.amount+',orderId:'+self.orderId+') {id,errors}}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    beforeSend: function(request) {
+                        request.setRequestHeader("c2bSession", document.cookie.replace("c2bToken=",""));
+                    },
+                    success : function(res) {
+                          var order = res.data.rechargeOilCardPay;
+                          var error = eval('(' + order.errors + ')');
+                          alert(error.base);
+                          // window.location.href="./pay.html?orderId="+order.id+"&amount="+self.amount; 
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+      },getOilCard:function(){
+
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "query {oilCardByLoginUser {id, cardNo , isDefault }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    success : function(res) {
+                          self.oilCard = res.data.oilCardByLoginUser;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      },checkedTicket:function(ticket){
+
+        this.checkedTicketModel = ticket;
+        this.dialogTableVisible = false;
+
+      }
+      ,addOilCard:function(cardNo){
+
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data :'{"query": "mutation {addOilCard(cardNo:'+cardNo+'){id, cardNo , isDefault }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    success : function(res) {
+                          // self.oilCard = res.data.addOilCard;
+                          self.dialogFormVisible = false;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      },changeTip:function(discount){
+          this.checkedDiscount = discount;
+
+
+      },getDate:function(n){
+        var date = new Date()
+        date.setMonth(date.getMonth()+n);
+
+        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+      }
+
+        
+  }
+
+})
+
+// app.getOilCard();
+// app.getTickets()
+// app.getParam("amount");  
+  </script>
+</html>

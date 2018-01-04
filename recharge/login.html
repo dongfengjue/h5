@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <style>
+  .el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+ <!-- {{getOilCard()}} -->
+
+  <el-form :model="form">
+    <el-form-item label="用户名：" :label-width="formLabelWidth">
+      <el-input v-model="form.username" auto-complete="off"></el-input>
+    </el-form-item>
+     <el-form-item label="密码：" :label-width="formLabelWidth">
+      <el-input v-model="form.password" auto-complete="off"></el-input>
+    </el-form-item>
+
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="login(form)">登录</el-button>
+  </div>
+
+
+  </div>
+</body>
+  <!-- 先引入 Vue -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+  <script>
+
+ 
+const baseUrl = "http://localhost:8080/graphql";
+
+
+// New VueJS instance
+const app = new Vue({
+  // CSS selector of the root DOM element
+  el: '#app',
+  data: {
+        form:{},
+        formLabelWidth:"100px"
+  },
+
+  methods: {
+      // 事件响应方法的逻辑代码
+      toProductList: function (e) {
+        
+        window.location.href="./productList.html"; 
+        
+      },login:function(){
+
+        self = this;
+
+                $.ajax({
+                    type : "POST",
+                    url : baseUrl,
+                    data:'{"query": "mutation {loginUser(login:\\"'+self.form.username+'\\",password:\\"'+self.form.password+'\\") {id, phone,errors }}" }',
+                    dataType: "JSON",
+                    headers: {'Content-Type': 'application/json'},
+                    // xhrFields: {
+                    //     withCredentials: true
+                    // },
+                    // crossDomain: true,
+                    success : function(res) {
+                          var data = res.data.loginUser;
+                    },
+                    error : function(){
+                        alert("错误");
+                    }
+
+                });
+
+
+      }
+
+        
+  }
+
+})
+
+  </script>
+</html>
